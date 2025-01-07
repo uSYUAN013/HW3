@@ -180,41 +180,52 @@ float Polynomial::Evaluate(float x) const {
 InsertTerm: O( $1$ )
 
 Clear: O( $n1 \times n2$ )
-Clear:O( $1$ )
-operator+:O($n + m$)
-operator-:O($n + m$)
-operator*:O(n * m)
-Eval: O( $1$ )
+
+operator+: O($n + m$)
+
+operator-: O($n + m$)
+
+operator*: O( $n \times m$ )
+
+Evaluate: OO( $1$ )
 
 ### 時間複雜度
 
-Add: O( $n1+n2$ )
+InsertTerm: O( $n$ )
 
-Mult: O( $n1 \times n2$ )
+Clear: O( $n$ )
 
-Eval: O( $n$ )
+operator+: O($n + m$)
+
+operator-: O($n + m$)
+
+operator*: O( $n \times m$ )
+
+Evaluate: OO( $n$ )
 ## 4.測試與驗證
 
 ```
-輸入第一個多項式:
-輸入非零項的數量: 3
-輸入第1項的係數和指數: 4 2
-輸入第2項的係數和指數: 3 1
-輸入第3項的係數和指數: 2 0
-輸入第二個多項式:
-輸入非零項的數量: 3
-輸入第1項的係數和指數: 4 2
-輸入第2項的係數和指數: 3 1
-輸入第3項的係數和指數: 2 0
-第一個多項式: 4x^2+3x^1+2x^0
-第二個多項式: 4x^2+3x^1+2x^0
-多項式的和: 8x^2+6x^1+4x^0
-多項式的積: 16x^4+24x^3+25x^2+12x^1+4x^0
-輸入一個值給p1代入:3
-p1(3) = 47
+##輸入
+Enter the first polynomial (n, coef, exp): 
+3
+3 2
+-1 1
+2 0
+Enter the second polynomial (n, coef, exp): 
+2
+1 1
+-2 0
+Enter a value to evaluate p1: 
+2
+##輸出
+p1: 3x^2 - x + 2
+p2: x - 2
+p1 + p2: 3x^2 + 0x^1 + 0
+p1 - p2: 3x^2 - 2x + 4
+p1 * p2: 3x^3 - 5x^2 + 8x - 4
+p1(2) = 12
 ```
 
 ## 5.心得討論
 
-這次的作業我學到了好多東西，而且也更精進了自己編寫程式碼的邏輯與思維，老師說學一個東西都是要從基礎開始打，
-不然後面更難的實作要怎麼辦，我覺得說得很對，所以透過這次打好基礎之後，我感覺我可以更進一步挑戰更難的問題了。
+透過這次的作業我學到了好多東西，而且也更精進了自己編寫程式碼的邏輯與思維，我在實作這個作業的時候感覺有點遇到困難，但請同學之後忽然通了，像打通任督二脈一樣，我覺得我可以更進一步挑戰更難的問題了。
