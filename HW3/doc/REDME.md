@@ -204,7 +204,7 @@ operator*: O( $n \times m$ )
 Evaluate: OO( $n$ )
 ## 4.測試與驗證
 
-###輸入
+輸入
 
 ```
 Enter the first polynomial (n, coef, exp): 
@@ -220,7 +220,7 @@ Enter a value to evaluate p1:
 2
 ```
 
-###輸出
+輸出
 
 ```
 p1: 3x^2 - x + 2
