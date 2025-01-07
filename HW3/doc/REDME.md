@@ -17,95 +17,165 @@ ostream& operator<<(ostream& os, const Polynomial& p)
 宣告重載函式來實現輸入與輸出
 ## 2.程式實作
 
-### 加法
+### (a)
 
 ```cpp
-Polynomial Polynomial::Add(const Polynomial& poly) const {
-    Polynomial result;
-    result.capacity = terms + poly.terms;
-    result.termArray = new Term[result.capacity];
+istream& operator>>(istream& is, Polynomial& x) {
+    int n, coef, exp;
+    is >> n;
+    for (int i = 0; i < n; ++i) {
+        is >> coef >> exp;
+        x.InsertTerm(coef, exp);
+    }
+    return is;
+}
+```
 
-    int thisPos = 0, polyPos = 0, resultPos = 0;
+### (b)
 
-    while (thisPos < terms && polyPos < poly.terms) {
-        if (termArray[thisPos].exp == poly.termArray[polyPos].exp) {
-            float sumCoef = termArray[thisPos].coef + poly.termArray[polyPos].coef;
-            if (sumCoef != 0) {
-                result.termArray[resultPos].coef = sumCoef;
-                result.termArray[resultPos].exp = termArray[thisPos].exp;
-                resultPos++;
+```cpp
+ostream& operator<<(ostream& os, const Polynomial& x) {
+    Node* current = x.head->link;
+    bool firstTerm = true;
+    while (current != x.head) {
+        if (current->coef > 0 && !firstTerm) {
+            os << " + ";
+        } else if (current->coef < 0) {
+            os << " - ";
+        }
+
+        int absCoef = abs(current->coef);
+        if (absCoef != 1 || current->exp == 0) {
+            os << absCoef;
+        }
+
+        if (current->exp != 0) {
+            os << "x";
+            if (current->exp != 1) {
+                os << "^" << current->exp;
             }
-            thisPos++;
-            polyPos++;
         }
-        else if (termArray[thisPos].exp > poly.termArray[polyPos].exp) {
-            result.termArray[resultPos] = termArray[thisPos];
-            thisPos++;
-            resultPos++;
+
+        current = current->link;
+        firstTerm = false;
+    }
+    return os;
+}
+```
+
+### (c)
+
+```cpp
+Polynomial::Polynomial(const Polynomial& a) {
+    head = new Node();
+    head->link = head;
+    Node* current = a.head->link;
+    while (current != a.head) {
+        InsertTerm(current->coef, current->exp);
+        current = current->link;
+    }
+}
+```
+
+### (d)
+
+```cpp
+const Polynomial& Polynomial::operator=(const Polynomial& a) {
+    if (this != &a) {
+        Clear();
+        Node* current = a.head->link;
+        while (current != a.head) {
+            InsertTerm(current->coef, current->exp);
+            current = current->link;
         }
-        else {
-            result.termArray[resultPos] = poly.termArray[polyPos];
-            polyPos++;
-            resultPos++;
+    }
+    return *this;
+}
+```
+
+### (e)
+
+```cpp
+Polynomial::~Polynomial() {
+    Clear();
+    delete head;
+}
+```
+
+### (f)
+
+```cpp
+Polynomial Polynomial::operator+(const Polynomial& b) const {
+    Polynomial result;
+    Node* aPtr = head->link;
+    Node* bPtr = b.head->link;
+
+    while (aPtr != head || bPtr != b.head) {
+        if (aPtr == head) {
+            result.InsertTerm(bPtr->coef, bPtr->exp);
+            bPtr = bPtr->link;
+        } else if (bPtr == b.head) {
+            result.InsertTerm(aPtr->coef, aPtr->exp);
+            aPtr = aPtr->link;
+        } else if (aPtr->exp > bPtr->exp) {
+            result.InsertTerm(aPtr->coef, aPtr->exp);
+            aPtr = aPtr->link;
+        } else if (aPtr->exp < bPtr->exp) {
+            result.InsertTerm(bPtr->coef, bPtr->exp);
+            bPtr = bPtr->link;
+        } else {
+            result.InsertTerm(aPtr->coef + bPtr->coef, aPtr->exp);
+            aPtr = aPtr->link;
+            bPtr = bPtr->link;
         }
     }
 
-    while (thisPos < terms) {
-        result.termArray[resultPos] = termArray[thisPos];
-        thisPos++;
-        resultPos++;
-    }
-
-    while (polyPos < poly.terms) {
-        result.termArray[resultPos] = poly.termArray[polyPos];
-        polyPos++;
-        resultPos++;
-    }
-
-    result.terms = resultPos;
     return result;
 }
 ```
 
-### 乘法
+### (g)
 
 ```cpp
-Polynomial Polynomial::Mult(const Polynomial& poly) const {
+Polynomial Polynomial::operator-(const Polynomial& b) const {
     Polynomial result;
-    result.capacity = terms * poly.terms;
-    result.termArray = new Term[result.capacity];
-
-    for (int i = 0; i < terms; ++i) {
-        for (int j = 0; j < poly.terms; ++j) {
-            float newCoef = termArray[i].coef * poly.termArray[j].coef;
-            int newExp = termArray[i].exp + poly.termArray[j].exp;
-            bool found = false;
-
-            for (int k = 0; k < result.terms; ++k) {
-                if (result.termArray[k].exp == newExp) {
-                    result.termArray[k].coef += newCoef;
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                result.termArray[result.terms].coef = newCoef;
-                result.termArray[result.terms].exp = newExp;
-                result.terms++;
-            }
-        }
+    Node* bPtr = b.head->link;
+    while (bPtr != b.head) {
+        result.InsertTerm(-bPtr->coef, bPtr->exp);
+        bPtr = bPtr->link;
     }
+    return *this + result;
+}
+```
 
-    // 移除係數為0的項次
-    int validTerms = 0;
-    for (int i = 0; i < result.terms; ++i) {
-        if (result.termArray[i].coef != 0) {
-            result.termArray[validTerms++] = result.termArray[i];
+### (h)
+
+```cpp
+Polynomial Polynomial::operator*(const Polynomial& b) const {
+    Polynomial result;
+    Node* aPtr = head->link;
+    while (aPtr != head) {
+        Node* bPtr = b.head->link;
+        while (bPtr != b.head) {
+            result.InsertTerm(aPtr->coef * bPtr->coef, aPtr->exp + bPtr->exp);
+            bPtr = bPtr->link;
         }
+        aPtr = aPtr->link;
     }
-    result.terms = validTerms;
+    return result;
+}
+```
 
+### (i)
+
+```cpp
+float Polynomial::Evaluate(float x) const {
+    float result = 0;
+    Node* current = head->link;
+    while (current != head) {
+        result += current->coef * std::pow(x, current->exp);
+        current = current->link;
+    }
     return result;
 }
 ```
