@@ -8,13 +8,6 @@
 鏈結串列：讓頭節點方便地指向自己，並且能夠輕鬆進行插入和刪除操作。
 coef：係數；exp：指數；link：指向下一個節點的指標。 
 
-
-### 舉例說明
-```cpp 
-istream& operator>>(istream& is, Polynomial& p)
-ostream& operator<<(ostream& os, const Polynomial& p)
-```
-宣告重載函式來實現輸入與輸出
 ## 2.程式實作
 
 ### (a)
