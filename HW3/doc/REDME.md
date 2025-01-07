@@ -177,7 +177,7 @@ float Polynomial::Evaluate(float x) const {
 
 ### 空間複雜度
 
-Add: O( $n1+n2$ ) 其中 n1 和 n2 分別是兩個多項式的非零項數量。
+InsertTerm: O(1)
 
 Mult: O( $n1 \times n2$ )
 
