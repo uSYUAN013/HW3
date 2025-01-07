@@ -177,10 +177,13 @@ float Polynomial::Evaluate(float x) const {
 
 ### 空間複雜度
 
-InsertTerm: O(1)
+InsertTerm: O( $1$ )
 
-Mult: O( $n1 \times n2$ )
-
+Clear: O( $n1 \times n2$ )
+Clear:O( $1$ )
+operator+:O($n + m$)
+operator-:O($n + m$)
+operator*:O(n * m)
 Eval: O( $1$ )
 
 ### 時間複雜度
